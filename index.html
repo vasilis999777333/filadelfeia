@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="el">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Αρχική — Η ΦΙΛΑΔΕΛΦΕΙΑ</title>
+  <meta name="description" content="Επίσημο δημόσιο site του σωματείου Η ΦΙΛΑΔΕΛΦΕΙΑ. Γνωριμία, ενημέρωση, δράσεις." />
+  <meta name="theme-color" content="#f97316" />
+
+  <!-- Icons & manifest (όλα στη ρίζα) -->
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Tailwind + local CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="min-h-screen bg-gradient-to-b from-orange-500 to-orange-300 text-white antialiased">
+  <header class="border-b border-white/15 backdrop-blur bg-white/10">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-6">
+      <a href="/index.html" class="flex items-center gap-3">
+        <img src="/filadelfeia_logo.svg" alt="Λογότυπο Η ΦΙΛΑΔΕΛΦΕΙΑ" class="h-9 w-9" />
+        <span class="font-semibold tracking-wide">Η ΦΙΛΑΔΕΛΦΕΙΑ</span>
+      </a>
+      <nav class="flex gap-5 text-white/90">
+        <a href="/index.html" data-active="home" class="hover:underline">Αρχική</a>
+        <a href="/about.html" data-active="about" class="hover:underline">Το Σωματείο</a>
+        <a href="/news.html" data-active="news" class="hover:underline">Δράσεις & Ανακοινώσεις</a>
+        <a href="/contact.html" data-active="contact" class="hover:underline">Επικοινωνία</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-12">
+    <section class="text-center">
+      <img src="/filadelfeia_logo.svg" alt="Λογότυπο Η ΦΙΛΑΔΕΛΦΕΙΑ" class="h-20 w-20 mx-auto mb-4" />
+      <h1 class="text-4xl font-extrabold">Σωματείο «Η ΦΙΛΑΔΕΛΦΕΙΑ»</h1>
+      <p class="mt-3 text-lg text-white/90">Γνωριμία, ενημέρωση, δράσεις.</p>
+      <div class="mt-6 flex justify-center gap-3">
+        <a href="/about.html" class="px-4 py-2 rounded-xl bg-white/15 border border-white/20">Μάθε περισσότερα</a>
+        <a href="/news.html" class="px-4 py-2 rounded-xl bg-white/15 border border-white/20">Δράσεις & Ανακοινώσεις</a>
+      </div>
+    </section>
+
+    <section class="mt-16">
+      <h2 class="text-2xl font-bold">Τελευταίες ανακοινώσεις</h2>
+      <div class="mt-6 grid gap-4">
+        <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
+          <div class="text-sm text-white/80">15/01/2025</div>
+          <h3 class="text-xl font-semibold mt-1">Ανακοίνωση Δράσης</h3>
+          <p class="mt-2 text-white/90">Σύντομη περιγραφή επερχόμενης δράσης του σωματείου.</p>
+        </article>
+        <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
+          <div class="text-sm text-white/80">10/12/2024</div>
+          <h3 class="text-xl font-semibold mt-1">Ευχαριστήριο μήνυμα</h3>
+          <p class="mt-2 text-white/90">Ευχαριστούμε τα μέλη και τους υποστηρικτές για τη συμμετοχή.</p>
+        </article>
+        <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
+          <div class="text-sm text-white/80">01/11/2024</div>
+          <h3 class="text-xl font-semibold mt-1">Ενημέρωση Σωματείου</h3>
+          <p class="mt-2 text-white/90">Σύντομη ενημέρωση σχετικά με τις τρέχουσες πρωτοβουλίες.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/15 mt-16">
+    <div class="max-w-6xl mx-auto px-4 py-8 text-white/80 text-sm">
+      <p>© <span id="year"></span> Δημόσιο site του σωματείου «Η ΦΙΛΑΔΕΛΦΕΙΑ». Όλα τα δικαιώματα διατηρούνται.</p>
+    </div>
+  </footer>
+
+  <script src="/site.js" defer></script>
+</body>
+</html>

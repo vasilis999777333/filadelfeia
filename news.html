@@ -1,0 +1,84 @@
+<!doctype html>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Δράσεις & Ανακοινώσεις — Η ΦΙΛΑΔΕΛΦΕΙΑ</title>
+<meta name="description" content="Όλες οι δράσεις και ανακοινώσεις του σωματείου Η ΦΙΛΑΔΕΛΦΕΙΑ." />
+<link rel="icon" href="/filadelfeia_logo.svg" />
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-orange-500 to-orange-300 text-white antialiased">
+<header class="border-b border-white/15 backdrop-blur bg-white/10">
+<div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-6">
+<a href="/index.html" class="flex items-center gap-3">
+<img src="/filadelfeia_logo.svg" alt="Λογότυπο Η ΦΙΛΑΔΕΛΦΕΙΑ" class="h-9 w-9" />
+<span class="font-semibold tracking-wide">Η ΦΙΛΑΔΕΛΦΕΙΑ</span>
+</a>
+<nav class="flex gap-5 text-white/90">
+<a href="/index.html" data-active="home" class="hover:underline">Αρχική</a>
+<a href="/about.html" data-active="about" class="hover:underline">Το Σωματείο</a>
+<a href="/news.html" data-active="news" class="hover:underline">Δράσεις & Ανακοινώσεις</a>
+<a href="/contact.html" data-active="contact" class="hover:underline">Επικοινωνία</a>
+</nav>
+</div>
+</header>
+
+
+<main class="max-w-6xl mx-auto px-4 py-12">
+<h1 class="text-3xl font-bold">Δράσεις & Ανακοινώσεις</h1>
+<p class="mt-2 text-white/90">Για να ενημερώσεις τη λίστα, τροποποίησε το αρχείο <code>/data/announcements.json</code>.</p>
+<div id="news-list" class="mt-8 grid gap-6"></div>
+
+
+<!-- Inline fallback δεδομένων -->
+<script id="announcements-fallback" type="application/json">[]</script>
+</main>
+
+
+<footer class="border-t border-white/15 mt-16">
+<div class="max-w-6xl mx-auto px-4 py-8 text-white/80 text-sm">
+<p>© <span id="year"></span> Δημόσιο site του σωματείου «Η ΦΙΛΑΔΕΛΦΕΙΑ». Όλα τα δικαιώματα διατηρούνται.</p>
+</div>
+</footer>
+
+
+<script>
+(function(){
+const path = location.pathname.replace('/', '').split('.')[0] || 'index';
+const map = { index: 'home', about: 'about', news: 'news', contact: 'contact' };
+document.querySelectorAll(`[data-active="${map[path]}"]`).forEach(a => a.classList.add('underline','font-semibold'));
+document.getElementById('year').textContent = new Date().getFullYear();
+})();
+
+
+async function loadAnnouncements() {
+let data = null;
+try {
+const res = await fetch('/data/announcements.json', { cache: 'no-cache' });
+if (!res.ok) throw new Error('HTTP ' + res.status);
+data = await res.json();
+} catch (e) {
+const fallback = document.getElementById('announcements-fallback');
+data = JSON.parse(fallback.textContent || '[]');
+}
+renderAnnouncements(data);
+}
+
+
+function renderAnnouncements(items) {
+const container = document.getElementById('news-list');
+const sorted = [...items].sort((a,b) => b.date.localeCompare(a.date));
+container.innerHTML = sorted.map(item => `
+<article class="rounded-2xl p-5 bg-white/10 border border-white/10">
+<div class="text-sm text-white/80">${new Date(item.date).toLocaleDateString('el-GR')}</div>
+<h2 class="text-xl font-semibold mt-1">${item.title}</h2>
+<p class="mt-2 text-white/90">${item.body}</p>
+${item.tags?.length ? `<div class="mt-3 flex flex-wrap gap-2">${item.tags.map(t=>`<span class=\"text-xs px-2 py-1 rounded-full bg-black/20\">#${t}</span>`).join('')}</div>` : ''}
+</article>
+`).join('');
+}
+
+
+loadAnnouncements();
+</script>
+</body>
+</html>

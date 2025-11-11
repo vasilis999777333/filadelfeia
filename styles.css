@@ -1,0 +1,10 @@
+
+:root { --brand:#f97316; }
+.navlink { color:#334155; text-decoration:none; }
+.navlink:hover { color:var(--brand); text-decoration:underline; }
+.btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1rem; border-radius:.75rem; font-weight:600; }
+.btn-light { background:white; color:#0f172a; }
+.btn-outline { border:1px solid rgba(255,255,255,.7); color:white; }
+.section-title { font-size:1.75rem; line-height:1.2; font-weight:800; }
+.prose h2 { margin-top:1.25rem; }
+.drop-shadow { filter: drop-shadow(0 8px 20px rgba(0,0,0,.12)); }
