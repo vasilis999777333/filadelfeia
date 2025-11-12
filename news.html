@@ -48,32 +48,53 @@
   <script id="announcements-fallback" type="application/json">[]</script>
 
   <script src="/site.js" defer></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      const y=document.getElementById('year'); if(y) y.textContent=new Date().getFullYear();
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const y=document.getElementById('year'); if(y) y.textContent=new Date().getFullYear();
 
-      let data = [];
+    async function loadJSON() {
       try {
-        const res = await fetch('/data/announcements.json', { cache: 'no-cache' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        data = await res.json();
+        const res = await fetch(`/data/announcements.json?v=${Date.now()}`, { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP '+res.status);
+        return await res.json();
       } catch (e) {
         const fb = document.getElementById('announcements-fallback');
-        if (fb?.textContent) data = JSON.parse(fb.textContent);
+        return fb?.textContent ? JSON.parse(fb.textContent) : [];
       }
+    }
 
-      const sorted = [...data].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
-      const box = document.getElementById('news-list');
-      document.getElementById('news-loading')?.remove();
-      box.innerHTML = sorted.map(item => `
+    function fmt(d){ try { return d ? new Date(d).toLocaleDateString('el-GR') : ''; } catch { return ''; } }
+
+    // INDEX: γεμίζει τις 3 τελευταίες
+    const latestBox = document.getElementById('latest');
+    if (latestBox) {
+      latestBox.innerHTML = '<p class="text-white/80">Φόρτωση ανακοινώσεων…</p>';
+      const data = await loadJSON();
+      const latest = [...data].sort((a,b)=> (b.date||'').localeCompare(a.date||'')).slice(0,3);
+      latestBox.innerHTML = latest.length ? latest.map(item => `
         <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
-          <div class="text-sm text-white/80">${item.date ? new Date(item.date).toLocaleDateString('el-GR') : ''}</div>
+          <div class="text-sm text-white/80">${fmt(item.date)}</div>
+          <h3 class="text-xl font-semibold mt-1">${item.title||''}</h3>
+          <p class="mt-2 text-white/90">${item.summary ?? item.body ?? ''}</p>
+        </article>`).join('') : '<p class="text-white/80">Δεν υπάρχουν ανακοινώσεις.</p>';
+    }
+
+    // NEWS: γεμίζει όλες
+    const listBox = document.getElementById('news-list');
+    if (listBox) {
+      listBox.innerHTML = '<p class="text-white/80">Φόρτωση ανακοινώσεων…</p>';
+      const data = await loadJSON();
+      const sorted = [...data].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+      listBox.innerHTML = sorted.length ? sorted.map(item => `
+        <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
+          <div class="text-sm text-white/80">${fmt(item.date)}</div>
           <h2 class="text-xl font-semibold mt-1">${item.title||''}</h2>
           <p class="mt-2 text-white/90">${item.summary ?? item.body ?? ''}</p>
           ${item.tags?.length ? `<div class="mt-3 flex flex-wrap gap-2">${item.tags.map(t=>`<span class="text-xs px-2 py-1 rounded-full bg-black/20">#${t}</span>`).join('')}</div>` : ''}
-        </article>
-      `).join('');
-    });
-  </script>
+        </article>`).join('') : '<p class="text-white/80">Δεν υπάρχουν ανακοινώσεις.</p>';
+    }
+  });
+</script>
+
 </body>
 </html>
