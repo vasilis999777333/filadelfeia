@@ -7,13 +7,11 @@
   <meta name="description" content="Επίσημο δημόσιο site του σωματείου Η ΦΙΛΑΔΕΛΦΕΙΑ. Γνωριμία, ενημέρωση, δράσεις." />
   <meta name="theme-color" content="#f97316" />
 
-  <!-- Icons & manifest (όλα στη ρίζα) -->
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
 
-  <!-- Tailwind + local CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/styles.css">
 </head>
@@ -46,22 +44,8 @@
 
     <section class="mt-16">
       <h2 class="text-2xl font-bold">Τελευταίες ανακοινώσεις</h2>
-      <div class="mt-6 grid gap-4">
-        <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
-          <div class="text-sm text-white/80">15/01/2025</div>
-          <h3 class="text-xl font-semibold mt-1">Ανακοίνωση Δράσης</h3>
-          <p class="mt-2 text-white/90">Σύντομη περιγραφή επερχόμενης δράσης του σωματείου.</p>
-        </article>
-        <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
-          <div class="text-sm text-white/80">10/12/2024</div>
-          <h3 class="text-xl font-semibold mt-1">Ευχαριστήριο μήνυμα</h3>
-          <p class="mt-2 text-white/90">Ευχαριστούμε τα μέλη και τους υποστηρικτές για τη συμμετοχή.</p>
-        </article>
-        <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
-          <div class="text-sm text-white/80">01/11/2024</div>
-          <h3 class="text-xl font-semibold mt-1">Ενημέρωση Σωματείου</h3>
-          <p class="mt-2 text-white/90">Σύντομη ενημέρωση σχετικά με τις τρέχουσες πρωτοβουλίες.</p>
-        </article>
+      <div id="latest" class="mt-6 grid gap-4">
+        <p id="latest-loading" class="text-white/80">Φόρτωση ανακοινώσεων…</p>
       </div>
     </section>
   </main>
@@ -72,6 +56,36 @@
     </div>
   </footer>
 
+  <!-- Προαιρετικό inline fallback για τοπικό άνοιγμα (file://) -->
+  <script id="announcements-fallback" type="application/json">[]</script>
+
   <script src="/site.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // γεμίζει έτος στο footer (αν δεν το κάνει ήδη το site.js)
+      const y=document.getElementById('year'); if(y) y.textContent=new Date().getFullYear();
+
+      let data = [];
+      try {
+        const res = await fetch('/data/announcements.json', { cache: 'no-cache' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        data = await res.json();
+      } catch (e) {
+        const fb = document.getElementById('announcements-fallback');
+        if (fb?.textContent) data = JSON.parse(fb.textContent);
+      }
+
+      const latest = [...data].sort((a,b)=> (b.date||'').localeCompare(a.date||'')).slice(0,3);
+      const box = document.getElementById('latest');
+      document.getElementById('latest-loading')?.remove();
+      box.innerHTML = latest.map(item => `
+        <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
+          <div class="text-sm text-white/80">${item.date ? new Date(item.date).toLocaleDateString('el-GR') : ''}</div>
+          <h3 class="text-xl font-semibold mt-1">${item.title||''}</h3>
+          <p class="mt-2 text-white/90">${item.summary ?? item.body ?? ''}</p>
+        </article>
+      `).join('');
+    });
+  </script>
 </body>
 </html>
