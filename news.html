@@ -22,11 +22,12 @@
         <img src="/filadelfeia_logo.svg" alt="Λογότυπο Η ΦΙΛΑΔΕΛΦΕΙΑ" class="h-9 w-9" />
         <span class="font-semibold tracking-wide">Η ΦΙΛΑΔΕΛΦΕΙΑ</span>
       </a>
-      <nav class="flex gap-5 text-white/90">
+      <nav class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-white/90">
         <a href="/index.html" data-active="home" class="hover:underline">Αρχική</a>
         <a href="/about.html" data-active="about" class="hover:underline">Το Σωματείο</a>
         <a href="/news.html" data-active="news" class="hover:underline">Δράσεις & Ανακοινώσεις</a>
         <a href="/contact.html" data-active="contact" class="hover:underline">Επικοινωνία</a>
+        <a href="/branches.html" data-active="branches" class="hover:underline">Παραρτήματα</a>
       </nav>
     </div>
   </header>
@@ -38,14 +39,23 @@
     </div>
   </main>
 
+  <!-- Logo ως σφραγίδα κάτω δεξιά -->
+  <div class="max-w-6xl mx-auto px-4 mt-8 flex justify-end">
+    <img
+      src="/images/filadelfeia_logo.svg"
+      alt="Λογότυπο Η ΦΙΛΑΔΕΛΦΕΙΑ"
+      class="w-20 h-20 md:w-24 md:h-24 drop-shadow"
+    >
+  </div>
+
   <footer class="border-t border-white/15 mt-16">
     <div class="max-w-6xl mx-auto px-4 py-8 text-white/80 text-sm">
       <p>
-  © <span id="year"></span> Δημόσιο site του σωματείου «Η ΦΙΛΑΔΕΛΦΕΙΑ». Όλα τα δικαιώματα διατηρούνται.
-</p>
-<p class="text-xs opacity-80 mt-2">
-  Η συλλογή και επεξεργασία προσωπικών δεδομένων γίνεται νόμιμα σύμφωνα με τον GDPR και την ελληνική νομοθεσία.
-</p>
+        © <span id="year"></span> Δημόσιο site του σωματείου «Η ΦΙΛΑΔΕΛΦΕΙΑ». Όλα τα δικαιώματα διατηρούνται.
+      </p>
+      <p class="text-xs opacity-80 mt-2">
+        Η συλλογή και επεξεργασία προσωπικών δεδομένων γίνεται νόμιμα σύμφωνα με τον GDPR και την ελληνική νομοθεσία.
+      </p>
     </div>
   </footer>
 
@@ -53,58 +63,46 @@
   <script id="announcements-fallback" type="application/json">[]</script>
 
   <script src="/site.js" defer></script>
-<script>
-  document.addEventListener('DOMContentLoaded', async () => {
-    const y=document.getElementById('year'); if(y) y.textContent=new Date().getFullYear();
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const y = document.getElementById('year');
+      if (y) y.textContent = new Date().getFullYear();
 
-    async function loadJSON() {
-      try {
-        const res = await fetch(`/data/announcements.json?v=${Date.now()}`, { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP '+res.status);
-        return await res.json();
-      } catch (e) {
-        const fb = document.getElementById('announcements-fallback');
-        return fb?.textContent ? JSON.parse(fb.textContent) : [];
+      async function loadJSON() {
+        try {
+          const res = await fetch(`/data/announcements.json?v=${Date.now()}`, { cache: 'no-store' });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return await res.json();
+        } catch (e) {
+          const fb = document.getElementById('announcements-fallback');
+          return fb?.textContent ? JSON.parse(fb.textContent) : [];
+        }
       }
-    }
 
-    function fmt(d){ try { return d ? new Date(d).toLocaleDateString('el-GR') : ''; } catch { return ''; } }
+      function fmt(d) {
+        try {
+          return d ? new Date(d).toLocaleDateString('el-GR') : '';
+        } catch {
+          return '';
+        }
+      }
 
-    // INDEX: γεμίζει τις 3 τελευταίες
-    const latestBox = document.getElementById('latest');
-    if (latestBox) {
-      latestBox.innerHTML = '<p class="text-white/80">Φόρτωση ανακοινώσεων…</p>';
-      const data = await loadJSON();
-      const latest = [...data].sort((a,b)=> (b.date||'').localeCompare(a.date||'')).slice(0,3);
-      latestBox.innerHTML = latest.length ? latest.map(item => `
-        <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
-          <div class="text-sm text-white/80">${fmt(item.date)}</div>
-          <h3 class="text-xl font-semibold mt-1">${item.title||''}</h3>
-          <p class="mt-2 text-white/90">${item.summary ?? item.body ?? ''}</p>
-        </article>`).join('') : '<p class="text-white/80">Δεν υπάρχουν ανακοινώσεις.</p>';
-    }
-
-    // NEWS: γεμίζει όλες
-    const listBox = document.getElementById('news-list');
-    if (listBox) {
-      listBox.innerHTML = '<p class="text-white/80">Φόρτωση ανακοινώσεων…</p>';
-      const data = await loadJSON();
-      const sorted = [...data].sort((a,b)=> (b.date||'').localeCompare(a.date||''));
-      listBox.innerHTML = sorted.length ? sorted.map(item => `
-        <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
-          <div class="text-sm text-white/80">${fmt(item.date)}</div>
-          <h2 class="text-xl font-semibold mt-1">${item.title||''}</h2>
-          <p class="mt-2 text-white/90">${item.summary ?? item.body ?? ''}</p>
-          ${item.tags?.length ? `<div class="mt-3 flex flex-wrap gap-2">${item.tags.map(t=>`<span class="text-xs px-2 py-1 rounded-full bg-black/20">#${t}</span>`).join('')}</div>` : ''}
-        </article>`).join('') : '<p class="text-white/80">Δεν υπάρχουν ανακοινώσεις.</p>';
-    }
-  });
-</script>
-<img
-   src="/images/filadelfeia_logo.svg"
-  alt="Λογότυπο Η ΦΙΛΑΔΕΛΦΕΙΑ"
-  class="fixed bottom-32 right-24 w-24 h-24 md:w-296 md:h-296 drop-shadow"
->
-
+      const listBox = document.getElementById('news-list');
+      if (listBox) {
+        listBox.innerHTML = '<p class="text-white/80">Φόρτωση ανακοινώσεων…</p>';
+        const data = await loadJSON();
+        const sorted = [...data].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        listBox.innerHTML = sorted.length
+          ? sorted.map(item => `
+            <article class="rounded-2xl p-5 bg-white/10 border border-white/10">
+              <div class="text-sm text-white/80">${fmt(item.date)}</div>
+              <h2 class="text-xl font-semibold mt-1">${item.title || ''}</h2>
+              <p class="mt-2 text-white/90">${item.summary ?? item.body ?? ''}</p>
+              ${item.tags?.length ? `<div class="mt-3 flex flex-wrap gap-2">${item.tags.map(t => `<span class="text-xs px-2 py-1 rounded-full bg-black/20">#${t}</span>`).join('')}</div>` : ''}
+            </article>`).join('')
+          : '<p class="text-white/80">Δεν υπάρχουν ανακοινώσεις.</p>';
+      }
+    });
+  </script>
 </body>
 </html>
